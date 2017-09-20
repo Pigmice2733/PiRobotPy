@@ -8,8 +8,9 @@ class MicroMaestro(object):
     Sender class that formats and sends motor commands
     to the Pololu board over serial USB
     """
-    def __init__(self, path):
+    def __init__(self, path, channel):
         self.ser = serial.Serial(path, 9600)
+        self.channel = channel
     
     def _minissc(self, channel, pwm):
         """
@@ -50,22 +51,4 @@ class MotorControl(object):
         elif out > 0:
             deadzone = 0.19 # deadzone is different for each motor direction
             self.maestro_controller.set_pwm_output(channel, out*(1-deadzone) + deadzone)
-        
-if __name__ == "__main__":
-    maestro = MicroMaestro('/dev/ttyACM0')
-    motor = MotorControl(maestro)
-    
-    
-    while True:
-        s = input("Motor Percentage: ")
-        try:
-            percent = int(s)
-            if percent >= -100 and percent <= 100:
-                motor.output(0, percent/100.0)
-                motor.output(1, percent/100.0)
-            else:
-                raise Exception("Invalid Percentage {}".format(percent))
-        except Exception as e:
-            print(e)
-        
-                
+ 

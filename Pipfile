@@ -5,5 +5,7 @@ name = "pypi"
 
 [packages]
 pyfrc = "*"
+pyserial = "*"
+
 
 [dev-packages]

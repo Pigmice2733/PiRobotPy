@@ -26,6 +26,7 @@ class PwmWatch(Thread):
             time.sleep(0.05)
             outputs = talon_outputs()
             if self.output:
+                # TODO: hook to micro maestro here
                 pass
             else:
                 for k, v in outputs.items():

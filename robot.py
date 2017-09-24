@@ -13,7 +13,7 @@ class Minibot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
-        self.pwm_watch = pwmoutput.PwmWatch()
+        self.pwm_watch = pwmoutput.PwmWatch() # TODO pass micro maestro here
 
         self.robot_drive = wpilib.RobotDrive(0,1)
         self.stick = wpilib.Joystick(1)

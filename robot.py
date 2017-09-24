@@ -4,6 +4,7 @@
 """
 
 import wpilib
+import reporter
 
 class Minibot(wpilib.IterativeRobot):
 
@@ -12,6 +13,8 @@ class Minibot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
+        r = reporter.Reporter()
+
         self.robot_drive = wpilib.RobotDrive(0,1)
         self.stick = wpilib.Joystick(1)
 
@@ -36,6 +39,7 @@ class Minibot(wpilib.IterativeRobot):
     def testPeriodic(self):
         """This function is called periodically during test mode."""
         wpilib.LiveWindow.run()
+
 
 if __name__ == "__main__":
     wpilib.run(Minibot)

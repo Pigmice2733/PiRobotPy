@@ -12,6 +12,17 @@ class MicroMaestro(object):
         self.ser = serial.Serial(path, 9600)
         self.channel = channel
     
+    def set_bounds(self, bmax, bmin, mid, fmin, fmax):
+        """
+        Sets the max backward, forward, and resting values of the motors
+        as well as the deadzones for the motors (min values).
+        """
+        self.bmax = bmax #tbd
+        self.bmin = bmin #0.08
+        self.mid = mid #0.0
+        self.fmin = fmin #0.19
+        self.fmax = fmax #tbd
+    
     def _minissc(self, channel, pwm):
         """
         packs the motor channel and value into bytes readable by a pololu board
@@ -40,15 +51,14 @@ class MotorControl(object):
         self.maestro_controller = maestro_controller
 
     def output(self, channel, out):
-        if out > 1.0 or out < -1.0:
+        if out > fmax or out < -bmax:
             raise Exception("Invalid Control Level {}".format(output))
-        if out == 0:
-            self.maestro_controller.set_pwm_output(channel, 0)
-        elif out < 0:
-            deadzone = 0.08 # determined by experiment for RC 20A Chinese Brushed Controllers
-            # The deadzone is the values of the output for which the pwm value doesn't move the motor
-            self.maestro_controller.set_pwm_output(channel, out*(1-deadzone) - deadzone)
-        elif out > 0:
-            deadzone = 0.19 # deadzone is different for each motor direction
-            self.maestro_controller.set_pwm_output(channel, out*(1-deadzone) + deadzone)
+        if out == mid:
+            self.maestro_controller.set_pwm_output(channel, mid)
+        elif out < mid:
+            # the max and min values of the motor are used to scale the input from the joysticks and convert them
+            # into values that the robot can use (without breaking).
+            self.maestro_controller.set_pwm_output(channel, out*(bmax-bmin) - bmin)
+        elif out > mid:
+            self.maestro_controller.set_pwm_output(channel, out*(fmax-fmin) + fmin)
  

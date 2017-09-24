@@ -4,7 +4,7 @@
 """
 
 import wpilib
-import reporter
+import pwmoutput
 
 class Minibot(wpilib.IterativeRobot):
 
@@ -13,7 +13,7 @@ class Minibot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
-        r = reporter.Reporter()
+        self.pwm_watch = pwmoutput.PwmWatch()
 
         self.robot_drive = wpilib.RobotDrive(0,1)
         self.stick = wpilib.Joystick(1)

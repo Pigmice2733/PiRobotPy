@@ -8,21 +8,10 @@ class MicroMaestro(object):
     Sender class that formats and sends motor commands
     to the Pololu board over serial USB
     """
-    def __init__(self, path, channel):
+    def __init__(self, path):
+        # Serial opened at 9600 baud
         self.ser = serial.Serial(path, 9600)
-        self.channel = channel
-    
-    def set_bounds(self, bmax, bmin, mid, fmin, fmax):
-        """
-        Sets the max backward, forward, and resting values of the motors
-        as well as the deadzones for the motors (min values).
-        """
-        self.bmax = bmax #tbd
-        self.bmin = bmin #0.08
-        self.mid = mid #0.0
-        self.fmin = fmin #0.19
-        self.fmax = fmax #tbd
-    
+
     def _minissc(self, channel, pwm):
         """
         packs the motor channel and value into bytes readable by a pololu board
@@ -47,18 +36,30 @@ class MicroMaestro(object):
         self._minissc(channel, int(pwm))
 
 class MotorControl(object):
-    def __init__(self, maestro_controller):
+    def __init__(self, maestro_controller, channel):
         self.maestro_controller = maestro_controller
+        self.channel = channel
 
-    def output(self, channel, out):
+    def set_bounds(self, bmax, bmin, mid, fmin, fmax):
+        """
+        Sets the max backward, forward, and resting values of the motors
+        as well as the deadzones for the motors (min values).
+        """
+        self.bmax = bmax #tbd
+        self.bmin = bmin #0.08
+        self.mid = mid #0.0
+        self.fmin = fmin #0.19
+        self.fmax = fmax #tbd
+    
+    def output(self, out):
         if out > fmax or out < -bmax:
             raise Exception("Invalid Control Level {}".format(output))
         if out == mid:
-            self.maestro_controller.set_pwm_output(channel, mid)
+            self.maestro_controller.set_pwm_output(self.channel, mid)
         elif out < mid:
             # the max and min values of the motor are used to scale the input from the joysticks and convert them
             # into values that the robot can use (without breaking).
-            self.maestro_controller.set_pwm_output(channel, out*(bmax-bmin) - bmin)
+            self.maestro_controller.set_pwm_output(self.channel, out*(bmax-bmin) - bmin)
         elif out > mid:
-            self.maestro_controller.set_pwm_output(channel, out*(fmax-fmin) + fmin)
+            self.maestro_controller.set_pwm_output(self.channel, out*(fmax-fmin) + fmin)
  

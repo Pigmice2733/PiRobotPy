@@ -32,8 +32,6 @@ class PhysicsEngine(object):
         '''
 
         # Simulate the drivetrain
-            # Negating left_motor because wpilib drivetrain
-            # assumes one set of motors is inverted from the others
         left_motor = hal_data['pwm'][0]['value']
         right_motor = hal_data['pwm'][1]['value']
 

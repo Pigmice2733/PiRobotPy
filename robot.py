@@ -16,7 +16,7 @@ class Minibot(wpilib.IterativeRobot):
         self.pwm_watch = pwmoutput.PwmWatch() # TODO pass micro maestro here
 
         self.robot_drive = wpilib.RobotDrive(0,1)
-        self.stick = wpilib.Joystick(1)
+        self.stick = wpilib.Joystick(0)
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""

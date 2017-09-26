@@ -18,9 +18,9 @@ class MicroMaestro(object):
         channel is the maestro output (0-5), pwm is 0-254 corresponding to 1000-2000us
         """
         if channel > 5 or channel < 0:
-            raise Exception("Invalid Channel {}".format(channel))
+            raise ValueError("Invalid Channel {}".format(channel))
         if pwm > 254 or pwm < 0:
-            raise Exception("Invalid Value {}".format(pwm))
+            raise ValueError("Invalid Value {}".format(pwm))
         print("Channel {} pwm {}".format(channel, pwm))
         # MiniSSC protocol is 3 bytes starting with ff
         packet = struct.pack("BBB", 0xff, channel, pwm)
@@ -28,9 +28,9 @@ class MicroMaestro(object):
 
     def set_pwm_output(self, channel, output):
         if output > 1.0 or output < -1.0:
-            raise Exception("Invalid Control Level {}".format(output))
+            raise ValueError("Invalid Control Level {}".format(output))
         if channel > 5 or channel < 0:
-            raise Exception("Invalid Channel {}".format(channel))
+            raise ValueError("Invalid Channel {}".format(channel))
         pwm = output*(254/2.0) + (254/2.0)
 
         self._minissc(channel, int(pwm))
@@ -53,7 +53,7 @@ class MotorControl(object):
     
     def output(self, out):
         if out > fmax or out < -bmax:
-            raise Exception("Invalid Control Level {}".format(output))
+            raise ValueError("Invalid Control Level {}".format(output))
         if out == 0:
             self.maestro_controller.set_pwm_output(self.channel, mid)
         elif out < 0:

@@ -54,12 +54,12 @@ class MotorControl(object):
     def output(self, out):
         if out > fmax or out < -bmax:
             raise Exception("Invalid Control Level {}".format(output))
-        if out == mid:
+        if out == 0:
             self.maestro_controller.set_pwm_output(self.channel, mid)
-        elif out < mid:
+        elif out < 0:
             # the max and min values of the motor are used to scale the input from the joysticks and convert them
             # into values that the robot can use (without breaking).
             self.maestro_controller.set_pwm_output(self.channel, out*(bmax-bmin) - bmin)
-        elif out > mid:
+        elif out > 0:
             self.maestro_controller.set_pwm_output(self.channel, out*(fmax-fmin) + fmin)
  

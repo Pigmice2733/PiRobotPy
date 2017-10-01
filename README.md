@@ -37,5 +37,4 @@ There is sufficient scaffolding to make the robotpy run command work, you invoke
 
 ### `sim` mode
 
-There is an incorrect physics model for a tank drive robot in `physics.py`. Someone should get this implemented correctly so that the robotpy sim, run by `python robot.py sim`, drives the robot around in a sensible way. (The bug may also be related to the robot implementation itself).
-
+A physics model for a simple tank drive robot is currently implemented. This can be run in the simulator with `python robot.py sim`. The simulator can be used either by manually controlling joystick inputs, or by hooking up physical joysticks.

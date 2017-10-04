@@ -6,6 +6,6 @@ name = "pypi"
 [packages]
 pyfrc = "*"
 pyserial = "*"
-
+pyfrc-deploypi = { git = 'git@github.com:Pigmice2733/pyfrc-deploypi.git', editable = 'true' }
 
 [dev-packages]

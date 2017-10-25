@@ -2,7 +2,6 @@
 # See the notes for the other physics sample
 #
 
-
 from pyfrc.physics import drivetrains
 
 
@@ -10,7 +9,6 @@ class PhysicsEngine(object):
     '''
        Simulates a 4-wheel robot using Tank Drive joystick control
     '''
-
 
     def __init__(self, physics_controller):
         '''
@@ -35,5 +33,6 @@ class PhysicsEngine(object):
         left_motor = hal_data['pwm'][0]['value']
         right_motor = hal_data['pwm'][1]['value']
 
-        speed, rotation = drivetrains.two_motor_drivetrain(left_motor, right_motor)
+        speed, rotation = drivetrains.two_motor_drivetrain(
+            left_motor, right_motor)
         self.physics_controller.drive(speed, rotation, tm_diff)

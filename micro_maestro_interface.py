@@ -1,5 +1,4 @@
 import struct
-import time
 import serial
 
 
@@ -8,47 +7,39 @@ class MicroMaestro(object):
     Sender class that formats and sends motor commands
     to the Pololu board over serial USB
     """
+
     def __init__(self, path, channel):
-        self.ser = serial.Serial(path, 9600)
-        self.channel = channel
-    
-    def _minissc(self, channel, pwm):
         """
-        packs the motor channel and value into bytes readable by a pololu board
-        channel is the maestro output (0-5), pwm is 0-254 corresponding to 1000-2000us
+        raises: `RuntimeError` if no micro maestro is present on `path`
+        """
+        try:
+            self.ser = serial.Serial(port=path, baudrate=9600)
+        # If no micro maestro is present on the specfied port,
+        #  raise a RuntimeError
+        except serial.SerialException:
+            raise RuntimeError("No micro maestro on port: " + str(path))
+
+        self.channel = channel
+
+    def _minissc(self, channel: int, pwm: float):
+        # Is pwm 0-254 correct? Should it be 0-255?
+        """Packs the motor channel and value into bytes readable by a
+        pololu board channel is the maestro output (0-5), pwm is 0-254
+        corresponding to 1000-2000us
         """
         if channel > 5 or channel < 0:
-            raise Exception("Invalid Channel {}".format(channel))
-        if pwm > 254 or pwm < 0:
-            raise Exception("Invalid Value {}".format(pwm))
-        print("Channel {} pwm {}".format(channel, pwm))
+            raise ValueError("Invalid channel: {}".format(channel))
+        if pwm > 254.0 or pwm < 0.0:
+            raise ValueError("Invalid value: {}".format(pwm))
         # MiniSSC protocol is 3 bytes starting with ff
         packet = struct.pack("BBB", 0xff, channel, pwm)
         self.ser.write(packet)
 
-    def set_pwm_output(self, channel, output):
+    def set_pwm_output(self, channel: int, output: float):
         if output > 1.0 or output < -1.0:
-            raise Exception("Invalid Control Level {}".format(output))
+            raise ValueError("Invalid pwm value: {}".format(output))
         if channel > 5 or channel < 0:
-            raise Exception("Invalid Channel {}".format(channel))
-        pwm = output*(254/2.0) + (254/2.0)
+            raise ValueError("Invalid channel: {}".format(channel))
+        pwm = output * (254.0 / 2.0) + (254.0 / 2.0)
 
         self._minissc(channel, int(pwm))
-
-class MotorControl(object):
-    def __init__(self, maestro_controller):
-        self.maestro_controller = maestro_controller
-
-    def output(self, channel, out):
-        if out > 1.0 or out < -1.0:
-            raise Exception("Invalid Control Level {}".format(output))
-        if out == 0:
-            self.maestro_controller.set_pwm_output(channel, 0)
-        elif out < 0:
-            deadzone = 0.08 # determined by experiment for RC 20A Chinese Brushed Controllers
-            # The deadzone is the values of the output for which the pwm value doesn't move the motor
-            self.maestro_controller.set_pwm_output(channel, out*(1-deadzone) - deadzone)
-        elif out > 0:
-            deadzone = 0.19 # deadzone is different for each motor direction
-            self.maestro_controller.set_pwm_output(channel, out*(1-deadzone) + deadzone)
- 
